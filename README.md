@@ -70,7 +70,7 @@ EAPゲルから得られる電流値は個体差や環境要因の影響を受�
 ### 1. ビルド
 ```bash
 cd ~/ros2_ws/src
-git clone https://github.com/0404anri/EAP_gel_robot_manipulation_system.git
+git clone https://github.com/a-neya/EAP_gel_robot_manipulation_system.git
 rosdep install -i --from-path src --rosdistro humble -y
 cd ~/ros2_ws
 colcon build --symlink-install
