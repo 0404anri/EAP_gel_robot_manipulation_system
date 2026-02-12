@@ -4,17 +4,11 @@
 
 本リポジトリは、2025年度卒業論文において開発した、EAP（Electro-Active Polymer）ゲルをセンサとして用いたロボットマニピュレーションシステムの制御プログラム一式である。
 
-## 概要 (System Overview)
+## 概要
 本システムは、**Host PC**（画像処理・ロボット制御）と **Raspberry Pi 4**（ゲルへの電圧印加制御・ゲルの電流値取得）の2つの計算機が連携して動作する。
 EAPゲルへの電圧印加によって生じるイオン分布変化を電流値として計測し、二次多項式フィッティングを用いて物体の把持位置を推定することで、EAPゲルを用いたロボットマニピュレーションを実現している。
 
-<p align="center">
-  <img src="https://img.shields.io/badge/ROS2-Humble-blue" alt="ROS2 Humble">
-  <img src="https://img.shields.io/badge/Device-RaspberryPi4-red" alt="RPi 4">
-  <img src="https://img.shields.io/badge/Robot-xArm6-green" alt="xArm 6">
-</p>
-
-## システム構成 (Architecture)
+## システム構成
 本システムは以下のROS 2ノードによって構成され、各通信にはトピック・サービス・アクションを適切に使い分けている。
 
 ### 1. Host PC側 (Ubuntu 22.04)
@@ -45,7 +39,7 @@ EAPゲルへの電圧印加によって生じるイオン分布変化を電流�
 - **`Gel Controller YOLOv8`** (YOLO版):
   - YOLOv8システム用のGPIO制御およびセンシングノード。
  
-## 動作環境 (Hardware Requirements)
+## 動作環境
 
 | 構成要素 | 使用デバイス |
 | :--- | :--- |
@@ -54,15 +48,14 @@ EAPゲルへの電圧印加によって生じるイオン分布変化を電流�
 | **Sensor** | INA219 Current Sensor Module |
 | **Computer** | Host PC, Raspberry Pi 4 Model B |
 
-## ソフトウェア要件 (Software Requirements)
-- **ROS 2 Humble Hawksbill**
-- **Realsense ROS Wrapper**: `ros-humble-realsense2-camera`
-- **MoveIt 2**: `ros-humble-moveit`
-- **OpenCV**: `opencv-python`
-- **xArm-Python-SDK** (UFACTORY公式)
-- **RPi.GPIO** (Raspberry Pi側)
+## ソフトウェア環境
+- **OS**: Ubuntu 22.04 LTS
+- **Middleware**: ROS 2 Humble Hawksbill
+- **Language**: Python 3.10
+- **Main Libraries**:
+  - Realsense ROS Wrapper, MoveIt 2, OpenCV, xArm-Python-SDK, RPi.GPIO
 
-## アルゴリズムの特徴 (Key Algorithms)
+## アルゴリズムの特徴
 
 ### 物体認識
 深層学習モデルであるYOLOv8による物体認識と比較検討した結果、安全性とリアルタイム性を重視し、**OpenCVを用いたHSV色抽出手法**を採用した。特定色の領域抽出と深度情報の統合により、低計算コストで確実な座標特定を実現している。
@@ -70,14 +63,13 @@ EAPゲルへの電圧印加によって生じるイオン分布変化を電流�
 ### 目標座標決定
 EAPゲルから得られる電流値は個体差や環境要因の影響を受けるため、以下の処理を行っている。
 1. **正規化処理**: 予備実験で得た最大・最小値を用いて $0 \sim 1$ に正規化。
-2. **フィッティング**: 電極位置（Top, Mid, Bot）を仮想座標系 ($x=9, 5, 1$) に配置し、二次関数近似を行うことで、物理的な電極が存在しない中間地点の座標も高精度に推定する。
+2. **フィッティング**: 電極位置（Top, Mid, Bot）を仮想座標系 ($x=9, 5, 1$) に配置し、二次多項式フィッティングを行うことで、物理的な電極が存在しない中間地点の座標も高精度に推定する。
 
-## インストールと実行 (Usage)
+## インストールと実行
 
 ### 1. ビルド
 ```bash
 cd ~/ros2_ws/src
-# URLはそのまま記述します
 git clone https://github.com/0404anri/EAP_gel_robot_manipulation_system.git
 rosdep install -i --from-path src --rosdistro humble -y
 cd ~/ros2_ws
