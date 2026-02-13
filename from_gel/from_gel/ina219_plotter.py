@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import time
 from collections import deque
 import datetime 
-import os  # 追加: ディレクトリ操作用
+import os
 
 # グラフに表示するデータ点数を制限
 MAX_DATA_POINTS = 200
@@ -20,14 +20,13 @@ class INA219Plotter(Node):
     def __init__(self):
         super().__init__('ina219_plotter')
 
-        # Publisherに合わせてQoSをシンプルに「10」に設定
         self.subscription = self.create_subscription(
             Float32MultiArray,
             'ina219_current_data',
             self.listener_callback,
             10)
 
-        # 固定長のキューを使ってデータを保存
+        # データを保存
         self.time_data = deque(maxlen=MAX_DATA_POINTS)
         self.current_data_top = deque(maxlen=MAX_DATA_POINTS)
         self.current_data_middle = deque(maxlen=MAX_DATA_POINTS)
@@ -131,7 +130,6 @@ def main(args=None):
 
     try:
         while rclpy.ok():
-            # GUI更新のためにタイムアウト付きでspin
             rclpy.spin_once(plotter_node, timeout_sec=0.01)
             
             if plotter_node.is_plot_closed():
@@ -149,4 +147,5 @@ def main(args=None):
             rclpy.shutdown()
 
 if __name__ == '__main__':
+
     main()
